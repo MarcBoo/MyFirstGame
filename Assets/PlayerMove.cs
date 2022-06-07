@@ -36,8 +36,9 @@ public class PlayerMove : MonoBehaviour
         //Soft landing
         if (isGrounded && velocity.y < 0)
         {
-            velocity.y = -2f;
+            velocity.y = -1f;
         }
+
         //Input of forward and sideways keys
         float x = Input.GetAxis("Horizontal");
         float z = Input.GetAxis("Vertical");
@@ -57,7 +58,7 @@ public class PlayerMove : MonoBehaviour
         controller.Move(velocity * Time.deltaTime);
 
         //Execute damage on oneself after lMBC; for testing purposes
-        if(Input.GetMouseButtonDown(0))
+        if(Input.GetMouseButtonDown(1))
         {
             Debug.Log("Click");
             DealDamage DD = GameObject.FindGameObjectWithTag("GameManager").GetComponent<DealDamage>();
