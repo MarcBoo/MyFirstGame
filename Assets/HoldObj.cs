@@ -7,11 +7,7 @@ public class HoldObj : MonoBehaviour
     public float grabDistance = 5;
     public Transform parentObj;
     private GameObject heldObj;
-    public float moveForce = 150;
-    public float yeetForce = 1000;
-
-    
-   
+    public float moveForce = 250;
     
 
 
@@ -30,7 +26,8 @@ public class HoldObj : MonoBehaviour
         {
             if (heldObj == null)
             {
-                if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out RaycastHit hit, grabDistance))
+                RaycastHit hit;
+                if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, grabDistance))
                 {
                     PickupObject(hit.transform.gameObject);
                 }
@@ -39,17 +36,6 @@ public class HoldObj : MonoBehaviour
             {
                 DropObject();
             }
-        }
-
-        if(Input.GetKeyDown(KeyCode.G) && heldObj != null)
-        {
-            Debug.Log("Yeet");
-            GameObject player = GameObject.FindGameObjectWithTag("Player");
-            Vector3 direction = player.transform.forward;
-            Rigidbody objYeet = heldObj.GetComponent<Rigidbody>();
-            objYeet.AddForce(direction  * yeetForce);
-            DropObject();
-            Debug.Log(direction);
         }
 
         if(heldObj != null)
@@ -81,6 +67,7 @@ public class HoldObj : MonoBehaviour
 
     void PickupObject(GameObject pickObject)
     {
+        Debug.Log(pickObject.name);
         if(pickObject.GetComponent<Rigidbody>())
         {
             Rigidbody obj = pickObject.GetComponent<Rigidbody>();
