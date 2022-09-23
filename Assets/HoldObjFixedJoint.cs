@@ -4,16 +4,25 @@ using UnityEngine;
 
 public class HoldObjFixedJoint : MonoBehaviour
 {
+    //heldObj is the GameObject floating in front of the camera and which connects with the held object
     [SerializeField] GameObject heldObj;
-    private GameObject cam;
+
+    //grabDistance, as it's name says, defines the distance to which it is possible to pick up objects
     public float grabDistance = 5;
-    private GameObject objRB;
+
+    //objRB is the GameObject which handles the Rigidbody, the object that will be picked up
+    GameObject objRB;
+
+    //objChecker is a GameObject which chekcs if an object should be picked up or not
+    GameObject objChecker;
+
+    //hit is the POV Ray which points at the object
     RaycastHit hit;
 
     private void Start()
     {
-        //heldObj = GameObject.FindGameObjectWithTag("objHolder");
-        cam = GameObject.FindGameObjectWithTag("MainCamera");
+        //Altlast heldObj = GameObject.FindGameObjectWithTag("objHolder");
+        //Altlast cam = GameObject.FindGameObjectWithTag("MainCamera");
     }
 
     void Update()
@@ -22,18 +31,23 @@ public class HoldObjFixedJoint : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
             if (objRB == null)
             {
-                Debug.Log("Initial held obj value 1: " + heldObj);
                 if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, grabDistance))
                 {
-                    PickupObject(hit.transform.gameObject);
+                    objChecker = hit.transform.gameObject;
+                    if(objChecker.CompareTag("pickable"))
+                    {
+                        PickupObject(objChecker);
+                    }
+                    else
+                    {
+                        Debug.Log("Fuck off das kannst du nicht aufheben");
+                    }
+                    
                 }
             }
             else
             {
-                Debug.Log("Initial held obj value 2: " + heldObj);
                 DropObject();
-                Debug.Log("Initial held obj value after Drop: " + heldObj);
-                Debug.Log("Initial objRB value after Drop: " + objRB);
             }
     }
 
@@ -54,7 +68,7 @@ public class HoldObjFixedJoint : MonoBehaviour
         Destroy(heldObj.GetComponent<Rigidbody>());
         heldObj.transform.DetachChildren();
         objRB.GetComponent<Rigidbody>().isKinematic = false;
-        cam.transform.parent = heldObj.transform;
+        // not necessary anymore cam.transform.parent = heldObj.transform;
         objRB = null;
         heldObj = null;
     }
