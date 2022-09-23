@@ -19,7 +19,8 @@ float xRotation = 0f;
     void Start()
     {
         //Cursor.lockState = CursorLockMode.Locked;
-        
+        //Cursor.visible = false;
+
     }
 
     //Listen for Mouse movement every frame and rotate cam accordingly, limiting Rotation to local rotation
