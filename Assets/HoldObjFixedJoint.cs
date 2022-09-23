@@ -19,36 +19,49 @@ public class HoldObjFixedJoint : MonoBehaviour
     //hit is the POV Ray which points at the object
     RaycastHit hit;
 
+    //force to yeet with
+    public float yeetForce;
+    public float upYeetForce;
+    bool yeetable;
+    public Transform cam;
+
     private void Start()
     {
         //Altlast heldObj = GameObject.FindGameObjectWithTag("objHolder");
-        //Altlast cam = GameObject.FindGameObjectWithTag("MainCamera");
+        //cam = GameObject.FindGameObjectWithTag("MainCamera");
     }
 
     void Update()
     {
         //heldObj.transform.position = cam.transform.position;// + new Vector3(0,-1,1);
         if (Input.GetMouseButtonDown(0))
+        {
             if (objRB == null)
             {
-                if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, grabDistance))
+                if (objRB == null && Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, grabDistance))
                 {
                     objChecker = hit.transform.gameObject;
-                    if(objChecker.CompareTag("pickable"))
+                    if (objChecker.CompareTag("pickable"))
                     {
+                        yeetable = true;
+                        Debug.Log(yeetable);
                         PickupObject(objChecker);
                     }
                     else
                     {
                         Debug.Log("Fuck off das kannst du nicht aufheben");
                     }
-                    
                 }
             }
             else
             {
                 DropObject();
             }
+        }
+        if (Input.GetKeyDown(KeyCode.G) && yeetable == true)
+        {
+            yeet();
+        }
     }
 
     void PickupObject(GameObject pickObject)
@@ -63,6 +76,7 @@ public class HoldObjFixedJoint : MonoBehaviour
 
     void DropObject()
     {
+        //Remove FixedJoints and Rigidbody of holder to reset, also reset kinematic of objRB
         Destroy(objRB.GetComponent<FixedJoint>());
         Destroy(heldObj.GetComponent<FixedJoint>());
         Destroy(heldObj.GetComponent<Rigidbody>());
@@ -73,18 +87,12 @@ public class HoldObjFixedJoint : MonoBehaviour
         heldObj = null;
     }
 
-    /* Yeet Function if time to implement:
-       public float yeetForce;
-    
-       if(Input.GetKeyDown(KeyCode.G) && heldObj != null)
-        {
-            Debug.Log("Yeet");
-            GameObject player = GameObject.FindGameObjectWithTag("Player");
-            Vector3 direction = player.transform.forward;
-            Rigidbody objYeet = heldObj.GetComponent<Rigidbody>();
-            objYeet.AddForce(direction  * yeetForce);
-            DropObject();
-            Debug.Log(direction);
-        }
-    */
+    void yeet()
+    {
+        Vector3 direction = cam.transform.forward * yeetForce + transform.up * upYeetForce;
+        Rigidbody objYeet = objRB.GetComponent<Rigidbody>();
+        DropObject();
+        objYeet.AddForce(direction, ForceMode.Impulse);
+        yeetable = false;
+    }
 }
